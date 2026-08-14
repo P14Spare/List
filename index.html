@@ -3,11 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>P14 SparePart - List Control (REV 5 - Text Scanner)</title>
+    <title>P14 SparePart - List Control (REV 7 - Unique Code Validation)</title>
+    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- SheetJS for Excel export & import -->
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <!-- Tesseract.js for Optical Character Recognition (Text Scanner) -->
     <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+    <!-- Google Fonts Inter -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Inter', sans-serif; }
@@ -19,6 +24,7 @@
 </head>
 <body class="bg-slate-50 text-slate-800 flex flex-col md:flex-row min-h-screen">
 
+    <!-- Mobile Header -->
     <div class="md:hidden sidebar-bg text-white p-4 flex items-center justify-between sticky top-0 z-40">
         <div class="flex items-center space-x-3">
             <div class="bg-blue-600 p-2 rounded-lg text-white">
@@ -34,8 +40,10 @@
         </button>
     </div>
 
+    <!-- Sidebar Navigation -->
     <aside id="sidebar" class="sidebar-bg text-white w-full md:w-64 flex-shrink-0 flex flex-col justify-between hidden md:flex min-h-screen sticky top-0 h-screen z-30 transition-all">
         <div>
+            <!-- Logo Section -->
             <div class="p-5 flex items-center space-x-3 border-b border-slate-800">
                 <div class="bg-blue-600 p-2.5 rounded-xl text-white shadow-lg shadow-blue-500/30">
                     <i data-lucide="package" class="w-6 h-6"></i>
@@ -46,6 +54,7 @@
                 </div>
             </div>
 
+            <!-- Navigation Links -->
             <nav class="p-4 space-y-2">
                 <button onclick="switchTab('dashboard')" id="nav-dashboard" class="w-full flex items-center space-x-3 px-4 py-3 rounded-xl font-medium text-sm transition-all active-menu">
                     <i data-lucide="layout-grid" class="w-5 h-5"></i>
@@ -63,12 +72,15 @@
                 </button>
             </nav>
 
+            <!-- ADMIN AUTH WIDGET IN SIDEBAR -->
             <div class="px-4 py-2">
                 <div id="admin-auth-widget" class="bg-slate-900/80 rounded-xl p-3 border border-slate-800/80 space-y-2">
-                    </div>
+                    <!-- Populated via JS -->
+                </div>
             </div>
         </div>
 
+        <!-- Database Status -->
         <div class="p-4 border-t border-slate-800 space-y-3">
             <div class="bg-slate-900/80 rounded-xl p-3 border border-slate-800/80">
                 <div class="flex items-center justify-between text-xs mb-1">
@@ -82,19 +94,22 @@
                 </button>
             </div>
             <div class="px-2">
-                <p class="text-[11px] text-slate-500">P14 List Sparepart @Sutawijaya v1.5 (OCR Text Scanner)</p>
+                <p class="text-[11px] text-slate-500">P14 List Sparepart @Sutawijaya v2.0</p>
             </div>
         </div>
     </aside>
 
+    <!-- Main Content Area -->
     <main class="flex-1 p-4 md:p-8 overflow-y-auto">
 
+        <!-- DASHBOARD TAB -->
         <section id="tab-dashboard" class="space-y-6">
             <div>
                 <h1 class="text-2xl font-bold text-slate-900">Executive Dashboard</h1>
                 <p class="text-sm text-slate-500">Real-time overview of your sparepart inventory.</p>
             </div>
 
+            <!-- Summary Cards Grid -->
             <div class="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-3 gap-4">
                 <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm flex justify-between items-start">
                     <div>
@@ -127,6 +142,7 @@
                 </div>
             </div>
 
+            <!-- Low Stock & Out of Stock Alert Table -->
             <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden">
                 <div class="p-5 border-b border-slate-100 flex items-center justify-between">
                     <div class="flex items-center space-x-2">
@@ -151,12 +167,14 @@
                             </tr>
                         </thead>
                         <tbody id="dashboard-alert-table" class="divide-y divide-slate-100 text-slate-700 font-medium">
-                            </tbody>
+                            <!-- Populated via JS -->
+                        </tbody>
                     </table>
                 </div>
             </div>
         </section>
 
+        <!-- INVENTORY TAB -->
         <section id="tab-inventory" class="space-y-6 hidden">
             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
@@ -164,10 +182,11 @@
                     <p id="inventory-count-text" class="text-sm text-slate-500">0 items listed.</p>
                 </div>
                 <div class="flex items-center space-x-2">
+                    <!-- Hidden file input for excel upload -->
                     <input type="file" id="excel-file-input" accept=".xlsx, .xls, .csv" class="hidden" onchange="importExcelToInventory(event)">
                     <button onclick="requestImportExcel()" class="inline-flex items-center space-x-2 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold text-sm px-4 py-2.5 rounded-xl shadow-sm transition-all">
                         <i data-lucide="file-spreadsheet" class="w-4 h-4"></i>
-                        <span>Import Excel</span>
+                        <span>Import Excel (New Code Only)</span>
                     </button>
                     <button onclick="requestAddModal()" class="inline-flex items-center space-x-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold text-sm px-4 py-2.5 rounded-xl shadow-sm transition-all">
                         <i data-lucide="plus" class="w-4 h-4"></i>
@@ -176,8 +195,10 @@
                 </div>
             </div>
 
+            <!-- Filter & Search Bar -->
             <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm flex flex-col md:flex-row items-center gap-3">
                 
+                <!-- SEARCH INPUT + TEXT SCANNER BUTTON -->
                 <div class="relative flex-1 w-full flex items-center">
                     <div class="relative flex-1">
                         <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3.5 top-3.5"></i>
@@ -216,6 +237,7 @@
                 </div>
             </div>
 
+            <!-- Inventory Main Table -->
             <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden">
                 <div class="overflow-x-auto">
                     <table class="w-full text-left text-sm">
@@ -232,12 +254,14 @@
                             </tr>
                         </thead>
                         <tbody id="inventory-table-body" class="divide-y divide-slate-100 text-slate-700 font-medium">
-                            </tbody>
+                            <!-- Populated via JS -->
+                        </tbody>
                     </table>
                 </div>
             </div>
         </section>
 
+        <!-- TRANSACTION HISTORY TAB -->
         <section id="tab-history" class="space-y-6 hidden">
             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
@@ -260,6 +284,7 @@
                 </div>
             </div>
 
+            <!-- Filter Bar for History -->
             <div class="bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm flex flex-col md:flex-row items-center gap-3">
                 <div class="relative flex-1 w-full">
                     <i data-lucide="search" class="w-4 h-4 text-slate-400 absolute left-3.5 top-3.5"></i>
@@ -275,6 +300,7 @@
                 </div>
             </div>
 
+            <!-- History Table -->
             <div class="bg-white rounded-2xl border border-slate-200/80 shadow-sm overflow-hidden">
                 <div class="overflow-x-auto">
                     <table class="w-full text-left text-sm">
@@ -290,7 +316,8 @@
                             </tr>
                         </thead>
                         <tbody id="history-table-body" class="divide-y divide-slate-100 text-slate-700 font-medium">
-                            </tbody>
+                            <!-- Populated via JS -->
+                        </tbody>
                     </table>
                 </div>
             </div>
@@ -298,6 +325,7 @@
 
     </main>
 
+    <!-- MODAL: TEXT CAMERA SCANNER (OCR) -->
     <div id="modal-scanner" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
         <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-100 space-y-4">
             <div class="flex items-center justify-between border-b border-slate-100 pb-3">
@@ -312,14 +340,17 @@
             
             <p class="text-xs text-slate-500 text-center">Arahkan kamera ke tulisan/teks nomor part. Pastikan cahaya cukup dan tulisan terlihat fokus.</p>
             
+            <!-- Tempat Scanner Ditampilkan -->
             <div class="relative w-full bg-black rounded-xl overflow-hidden flex items-center justify-center" style="height: 300px;">
                 <video id="camera-feed" class="w-full h-full object-cover" autoplay playsinline></video>
+                <!-- Loading Overlay -->
                 <div id="ocr-status" class="absolute inset-0 bg-slate-900/80 flex flex-col items-center justify-center text-white hidden z-10">
                     <i data-lucide="loader" class="w-8 h-8 animate-spin mb-2 text-indigo-400"></i>
                     <span class="text-sm font-semibold" id="ocr-status-text">Membaca Teks...</span>
                 </div>
             </div>
 
+            <!-- Hidden canvas to capture image from video -->
             <canvas id="camera-canvas" class="hidden"></canvas>
 
             <button type="button" onclick="captureAndScan()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 rounded-xl shadow-sm transition-all flex items-center justify-center space-x-2">
@@ -333,6 +364,7 @@
         </div>
     </div>
 
+    <!-- MODAL: ADD / EDIT SPAREPART -->
     <div id="modal-part" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
         <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl border border-slate-100 space-y-4">
             <div class="flex items-center justify-between border-b border-slate-100 pb-3">
@@ -352,7 +384,8 @@
                     <div>
                         <label class="block text-xs font-semibold text-slate-600 mb-1">Kategori *</label>
                         <select id="part-category" required class="w-full p-2.5 text-sm bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500">
-                            </select>
+                            <!-- Populated via JS -->
+                        </select>
                     </div>
                 </div>
 
@@ -409,6 +442,7 @@
         </div>
     </div>
 
+    <!-- MODAL: KELOLA KATEGORI -->
     <div id="modal-category" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
         <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-100 space-y-4">
             <div class="flex items-center justify-between border-b border-slate-100 pb-3">
@@ -425,7 +459,8 @@
                 </div>
 
                 <div class="max-h-60 overflow-y-auto border border-slate-200 rounded-xl divide-y divide-slate-100" id="category-list-container">
-                    </div>
+                    <!-- Populated via JS -->
+                </div>
             </div>
 
             <div class="flex justify-end pt-3 border-t border-slate-100">
@@ -434,6 +469,7 @@
         </div>
     </div>
 
+    <!-- MODAL: STOCK IN / OUT TRANSACTION -->
     <div id="modal-transaction" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
         <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-100 space-y-4">
             <div class="flex items-center justify-between border-b border-slate-100 pb-3">
@@ -475,6 +511,7 @@
         </div>
     </div>
 
+    <!-- MODAL: DATABASE CONFIGURATION -->
     <div id="modal-config" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
         <div class="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-slate-100 space-y-4">
             <div class="flex items-center justify-between border-b border-slate-100 pb-3">
@@ -512,20 +549,16 @@
         </div>
     </div>
 
+    <!-- JAVASCRIPT LOGIC -->
     <script>
-        // PASSWORD CONFIGURATION FOR ALL ACTIONS, ADD ITEM, DB CONFIG & CATEGORY MANAGEMENT
         const ADMIN_PASSWORD = "admin123"; 
         let isAdminLoggedIn = localStorage.getItem('sp_is_admin') === 'true';
 
-        // DATA DIKOSONGKAN AGAR TIDAK MENGIRIM DUMMY DATA KE CLOUD
         let parts = [];
         let logs = [];
         let categories = [];
-        
-        // Kategori default
         const defaultCategories = ["Mechanical", "Electrical", "Plumbing", "IT Hardware", "Consumable"];
 
-        // INIT APP
         window.addEventListener('DOMContentLoaded', async () => {
             await loadData();
             renderAuthWidget();
@@ -548,7 +581,6 @@
             const video = document.getElementById('camera-feed');
             
             try {
-                // Mengakses kamera (memprioritaskan kamera belakang di HP)
                 videoStream = await navigator.mediaDevices.getUserMedia({ 
                     video: { facingMode: "environment" } 
                 });
@@ -575,34 +607,27 @@
             
             if (!videoStream) return;
 
-            // Samakan ukuran canvas dengan video
             canvas.width = video.videoWidth;
             canvas.height = video.videoHeight;
             
-            // Gambar frame video ke dalam canvas
             const ctx = canvas.getContext('2d');
             ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
             
-            // Tampilkan loading screen
             statusEl.classList.remove('hidden');
-            statusText.innerText = "Membaca teks... Mohon tunggu.";
+            statusText.innerText = "Membaca Teks... Mohon tunggu.";
             
             try {
-                // Memanggil Tesseract.js untuk membaca gambar canvas
                 const result = await Tesseract.recognize(canvas, 'eng', {
                     logger: m => {
-                        // Update status loading progresnya
                         if(m.status === 'recognizing text'){
                             statusText.innerText = `Membaca Teks... ${Math.round(m.progress * 100)}%`;
                         }
                     }
                 });
                 
-                // Ambil teks hasil scan, bersihkan spasi kosong dan baris baru (enter)
                 let text = result.data.text.trim().replace(/\n/g, ' ');
                 
                 if (text && text.length > 0) {
-                    // Masukkan ke pencarian
                     document.getElementById('inv-search').value = text;
                     renderInventoryTable();
                     closeScanner();
@@ -718,7 +743,6 @@
             }
         }
 
-        // SIDEBAR AUTH WIDGET
         function renderAuthWidget() {
             const widget = document.getElementById('admin-auth-widget');
             if (!widget) return;
@@ -769,6 +793,7 @@
             alert("Berhasil logout. Semua menu actions, tambah barang, kategori, & pengaturan database dikunci kembali.");
         }
 
+        // BATCHED UPLOAD TO SUPABASE (Aman untuk 983+ baris Excel tanpa error payload limit)
         async function saveData() {
             localStorage.setItem('sp_inventory_parts', JSON.stringify(parts));
             localStorage.setItem('sp_inventory_logs', JSON.stringify(logs));
@@ -779,16 +804,20 @@
 
             if (url && key && parts.length > 0) { 
                 try {
-                    await fetch(`${url}/rest/v1/spareparts`, {
-                        method: 'POST',
-                        headers: {
-                            'apikey': key,
-                            'Authorization': `Bearer ${key}`,
-                            'Content-Type': 'application/json',
-                            'Prefer': 'resolution=merge-duplicates'
-                        },
-                        body: JSON.stringify(parts)
-                    });
+                    const chunkSize = 100;
+                    for (let i = 0; i < parts.length; i += chunkSize) {
+                        const chunk = parts.slice(i, i + chunkSize);
+                        await fetch(`${url}/rest/v1/spareparts`, {
+                            method: 'POST',
+                            headers: {
+                                'apikey': key,
+                                'Authorization': `Bearer ${key}`,
+                                'Content-Type': 'application/json',
+                                'Prefer': 'resolution=merge-duplicates'
+                            },
+                            body: JSON.stringify(chunk)
+                        });
+                    }
                 } catch (err) {
                     console.error("Gagal update parts ke Cloud:", err);
                 }
@@ -796,16 +825,20 @@
             
             if (url && key && logs.length > 0) {
                 try {
-                    await fetch(`${url}/rest/v1/logs`, {
-                        method: 'POST',
-                        headers: {
-                            'apikey': key,
-                            'Authorization': `Bearer ${key}`,
-                            'Content-Type': 'application/json',
-                            'Prefer': 'resolution=merge-duplicates'
-                        },
-                        body: JSON.stringify(logs)
-                    });
+                    const chunkSize = 100;
+                    for (let i = 0; i < logs.length; i += chunkSize) {
+                        const chunk = logs.slice(i, i + chunkSize);
+                        await fetch(`${url}/rest/v1/logs`, {
+                            method: 'POST',
+                            headers: {
+                                'apikey': key,
+                                'Authorization': `Bearer ${key}`,
+                                'Content-Type': 'application/json',
+                                'Prefer': 'resolution=merge-duplicates'
+                            },
+                            body: JSON.stringify(chunk)
+                        });
+                    }
                 } catch (err) {
                     console.error("Gagal update logs ke Cloud:", err);
                 }
@@ -832,32 +865,40 @@
 
             try {
                 if (parts.length > 0) {
-                    await fetch(`${url}/rest/v1/spareparts`, {
-                        method: 'POST',
-                        headers: {
-                            'apikey': key,
-                            'Authorization': `Bearer ${key}`,
-                            'Content-Type': 'application/json',
-                            'Prefer': 'resolution=merge-duplicates'
-                        },
-                        body: JSON.stringify(parts)
-                    });
+                    const chunkSize = 100;
+                    for (let i = 0; i < parts.length; i += chunkSize) {
+                        const chunk = parts.slice(i, i + chunkSize);
+                        await fetch(`${url}/rest/v1/spareparts`, {
+                            method: 'POST',
+                            headers: {
+                                'apikey': key,
+                                'Authorization': `Bearer ${key}`,
+                                'Content-Type': 'application/json',
+                                'Prefer': 'resolution=merge-duplicates'
+                            },
+                            body: JSON.stringify(chunk)
+                        });
+                    }
                 }
 
                 if (logs.length > 0) {
-                    await fetch(`${url}/rest/v1/logs`, {
-                        method: 'POST',
-                        headers: {
-                            'apikey': key,
-                            'Authorization': `Bearer ${key}`,
-                            'Content-Type': 'application/json',
-                            'Prefer': 'resolution=merge-duplicates'
-                        },
-                        body: JSON.stringify(logs)
-                    });
+                    const chunkSize = 100;
+                    for (let i = 0; i < logs.length; i += chunkSize) {
+                        const chunk = logs.slice(i, i + chunkSize);
+                        await fetch(`${url}/rest/v1/logs`, {
+                            method: 'POST',
+                            headers: {
+                                'apikey': key,
+                                'Authorization': `Bearer ${key}`,
+                                'Content-Type': 'application/json',
+                                'Prefer': 'resolution=merge-duplicates'
+                            },
+                            body: JSON.stringify(chunk)
+                        });
+                    }
                 }
                 
-                alert("Sukses! Semua data lokal telah di-upload ke Supabase Cloud DB.");
+                alert("Sukses! Semua data lokal telah di-upload ke Supabase Cloud DB secara bertahap.");
                 await loadData();
                 closeModal('modal-config');
             } catch (err) {
@@ -865,7 +906,6 @@
             }
         }
 
-        // NAVIGASI TAB
         function switchTab(tabName) {
             ['dashboard', 'inventory', 'history'].forEach(t => {
                 document.getElementById(`tab-${t}`).classList.add('hidden');
@@ -905,7 +945,6 @@
             }
         }
 
-        // RENDER DASHBOARD
         function renderDashboard() {
             const totalItems = parts.length;
             const lowStockCount = parts.filter(p => p.qty > 0 && p.qty <= p.min).length;
@@ -940,7 +979,6 @@
             });
         }
 
-        // RENDER INVENTORY TABLE
         function renderInventoryTable() {
             const search = document.getElementById('inv-search').value.toLowerCase();
             const cat = document.getElementById('inv-filter-category').value;
@@ -1002,7 +1040,6 @@
             lucide.createIcons();
         }
 
-        // RENDER HISTORY TABLE
         function renderHistoryTable() {
             const search = document.getElementById('hist-search').value.toLowerCase();
             const typeFilter = document.getElementById('hist-filter-type').value;
@@ -1043,7 +1080,6 @@
             lucide.createIcons();
         }
 
-        // AUTH GUARDS FOR ACTIONS, CONFIG, CATEGORY, ADD ITEM & HISTORY CLEAR
         function requestTx(partId, type) {
             if (!isAdminLoggedIn) {
                 alert("Akses transaksi stok dikunci! Silakan masukkan password admin pada panel login di sidebar kiri terlebih dahulu.");
@@ -1124,7 +1160,7 @@
             document.getElementById('excel-file-input').click();
         }
 
-        // IMPORT EXCEL LOGIC
+        // LOGIKA IMPORT EXCEL: KODE YANG SUDAH ADA DI DATABASE DIABAIKAN, HANYA KODE BARU YANG MASUK
         function importExcelToInventory(e) {
             const file = e.target.files[0];
             if (!file) return;
@@ -1143,7 +1179,9 @@
                         return;
                     }
 
-                    let addedCount = 0;
+                    let newAddedCount = 0;
+                    let skippedCount = 0;
+
                     jsonRows.forEach(row => {
                         const code = String(row["Part Code"] || row["Kode Barang"] || row["code"] || "").trim().toUpperCase();
                         const name = String(row["Name"] || row["Nama Barang"] || row["name"] || "").trim();
@@ -1156,30 +1194,31 @@
                         const desc = String(row["Desc"] || row["Description"] || row["Deskripsi"] || row["desc"] || "").trim();
 
                         if (code && name) {
-                            if (!categories.includes(category)) {
-                                categories.push(category);
-                            }
+                            // Cek apakah Part Code sudah ada di database lokal/cloud saat ini
+                            const isExist = parts.some(p => p.code.toUpperCase() === code);
 
-                            const existingIndex = parts.findIndex(p => p.code === code);
-                            if (existingIndex !== -1) {
-                                parts[existingIndex] = {
-                                    ...parts[existingIndex],
-                                    name, category, location, qty, min, unit, price, desc
-                                };
+                            if (isExist) {
+                                // Jika sudah ada, ABAIKAN (tidak ditimpa/diubah)
+                                skippedCount++;
                             } else {
+                                // Jika belum ada, masukkan sebagai data baru
+                                if (!categories.includes(category)) {
+                                    categories.push(category);
+                                }
+
                                 parts.unshift({
-                                    id: Date.now().toString() + Math.floor(Math.random()*1000),
+                                    id: Date.now().toString() + Math.floor(Math.random()*10000),
                                     code, name, category, location, qty, min, unit, price, desc
                                 });
+                                newAddedCount++;
                             }
-                            addedCount++;
                         }
                     });
 
                     localStorage.setItem('sp_categories', JSON.stringify(categories));
                     renderCategoryDropdowns();
                     saveData();
-                    alert(`Berhasil mengimpor/memperbarui ${addedCount} data barang dari Excel!`);
+                    alert(`Import Selesai!\n- Berhasil ditambah (Kode Baru): ${newAddedCount} item\n- Dilewati (Kode Sudah Ada): ${skippedCount} item`);
                 } catch (err) {
                     alert("Gagal membaca file Excel: " + err.message);
                 }
@@ -1188,7 +1227,6 @@
             reader.readAsArrayBuffer(file);
         }
 
-        // KELOLA KATEGORI MODAL & LOGIC
         function openCategoryModal() {
             renderCategoryList();
             document.getElementById('new-category-name').value = '';
@@ -1238,7 +1276,7 @@
             }
             const isUsed = parts.some(p => p.category === catName);
             if (isUsed) {
-                if (!confirm(`Kategori "${catName}" sedang digunakan oleh beberapa sparepart. Tetap ingin menghapusnya? Sparepart terkait akan dipindahkan ke kategori pertama.`)) {
+                if (!confirm(`Kategori "${catName}" sedang digunakan oleh beberapa sparepart. Tetap ingin menghapusnya?`)) {
                     return;
                 }
                 const fallbackCat = categories.find(c => c !== catName);
@@ -1256,9 +1294,8 @@
             saveData();
         }
 
-        // FUNGSI MENGHAPUS TRANSACTION HISTORY
         async function clearTransactionHistory() {
-            if (confirm("Apakah Anda yakin ingin menghapus seluruh riwayat transaksi? Tindakan ini tidak dapat dibatalkan.")) {
+            if (confirm("Apakah Anda yakin ingin menghapus seluruh riwayat transaksi?")) {
                 logs = [];
                 localStorage.setItem('sp_inventory_logs', JSON.stringify(logs));
 
@@ -1280,7 +1317,6 @@
             }
         }
 
-        // FUNGSI MODAL
         function closeModal(id) {
             document.getElementById(id).classList.add('hidden');
         }
@@ -1335,6 +1371,13 @@
                     parts[idx] = { ...parts[idx], code, category, name, qty, min, unit, location, price, desc };
                 }
             } else {
+                // Cek unik manual lewat form tambah
+                const isExist = parts.some(p => p.code.toUpperCase() === code);
+                if (isExist) {
+                    alert(`Kode Part "${code}" sudah ada di database! Gunakan kode lain.`);
+                    return;
+                }
+
                 const newPart = {
                     id: Date.now().toString(),
                     code, category, name, qty, min, unit, location, price, desc
@@ -1388,7 +1431,6 @@
             }
         }
 
-        // TRANSAKSI MODAL
         function openTxModal(partId, type) {
             const p = parts.find(item => item.id === partId);
             if (!p) return;
@@ -1455,12 +1497,11 @@
             closeModal('modal-transaction');
         }
 
-        // EXPORT LOGIC
         function exportInventoryToCSV() {
             let csv = "Part Code,Name,Category,Location,Stock,Min,Unit,Status,Price\n";
             parts.forEach(p => {
                 let pStat = p.qty === 0 ? 'Out of Stock' : (p.qty <= p.min ? 'Low Stock' : 'In Stock');
-                csv += `"${p.code}","${p.name}","${p.category}","${p.location}",${p.qty},${p.min},"${p.unit}","${pStat}",${p.price}\n`;
+                csv += `\"${p.code}\",\"${p.name}\",\"${p.category}\",\"${p.location}\",${p.qty},${p.min},\"${p.unit}\",\"${pStat}\",${p.price}\n`;
             });
             downloadFile(csv, 'Sparepart_Inventory.csv', 'text/csv');
         }
@@ -1485,7 +1526,7 @@
         function exportHistoryToCSV() {
             let csv = "Date & Time,Type,Part Code,Name,Quantity,Reference,Operator\n";
             logs.forEach(l => {
-                csv += `"${l.datetime}","${l.type}","${l.code}","${l.name}","${l.qty}","${l.ref}","${l.operator}"\n`;
+                csv += `\"${l.datetime}\",\"${l.type}\",\"${l.code}\",\"${l.name}\",\"${l.qty}\",\"${l.ref}\",\"${l.operator}\"\n`;
             });
             downloadFile(csv, 'Transaction_History.csv', 'text/csv');
         }
